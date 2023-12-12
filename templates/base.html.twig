@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<style>
+			body {
+				font-family: 'Arial', sans-serif;
+				margin-top: 20px;
+			}
+
+			.container {
+				margin-top: 30px;
+			}
+
+			.form-group {
+				margin-bottom: 20px;
+			}
+
+			.btn-group {
+				display: flex;
+			}
+
+			.btn-group .btn {
+				flex: 1;
+				margin-right: 10px;
+				margin-bottom: 30px;
+			}
+
+			#jobApplicationsTable th,
+			#jobApplicationsTable td {
+				text-align: center;
+			}
+
+			#jobApplicationsTable th {
+				white-space: nowrap;
+			}
+		</style>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+	</head>
+	<body>
+		{% block body %}{% endblock %}
+	</body>
+</html>

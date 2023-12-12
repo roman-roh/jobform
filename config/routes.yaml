@@ -1,0 +1,35 @@
+# config/routes.yaml
+job_application_index:
+    path: /
+    controller: App\Controller\JobApplicationController::index
+    methods: ['GET']
+
+job_application_search:
+    path: /search
+    controller: App\Controller\JobApplicationController::search
+    methods: ['GET']
+
+job_application_add:
+    path: /add
+    controller: App\Controller\JobApplicationController::new
+    methods: ['POST']
+
+job_application_show:
+    path: /show
+    controller: App\Controller\SearchIdController::show
+    methods: ['GET', 'POST']
+
+job_application_old:
+    path: /old
+    controller: App\Controller\SearchOldController::showOldApplicationsUI
+    methods: ['GET']
+
+job_application_new:
+    path: /new
+    controller: App\Controller\SearchNewController::showNewApplicationsUI
+    methods: ['GET']
+
+job_application_all:
+    path: /all
+    controller: App\Controller\SearchAllController::all
+    methods: ['GET']

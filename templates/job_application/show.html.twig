@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %} {% block body %}
+<style>
+	body {
+		font-family: "Arial", sans-serif;
+		margin-top: 20px;
+	}
+
+	.container {
+		margin-top: 30px;
+	}
+
+	.form-group {
+		margin-bottom: 20px;
+	}
+
+	.btn-group {
+		display: flex;
+	}
+
+	.btn-group .btn {
+		flex: 1;
+		margin-right: 10px;
+		margin-bottom: 30px;
+	}
+
+	#jobApplicationsTable th,
+	#jobApplicationsTable td {
+		text-align: center;
+	}
+
+	#jobApplicationsTable th {
+		white-space: nowrap;
+	}
+</style>
+<div class="container mt-5">
+	<h2>Show Job Application</h2>
+	<h4>There are 4 search types to choose from:</h4>
+	<p>ID - search by ID</p>
+	<p>
+		New - searches only for new applications, i.e. applications that the user
+		has not seen before
+	</p>
+	<p>
+		Old - searches only for old applications, i.e. applications that the user
+		has already seen
+	</p>
+	<p>All - searches for all applications</p>
+	<div class="btn-group" style="margin-top: 20px">
+		<a href="{{ path('job_application_show') }}" class="btn btn-primary">ID</a>
+		<a href="{{ path('job_application_new') }}" class="btn btn-primary">New</a>
+		<a href="{{ path('job_application_old') }}" class="btn btn-primary">Old</a>
+		<a href="{{ path('job_application_all') }}" class="btn btn-primary">All</a>
+		<button onclick="exportTableToCSV('jobApplicationsTable', 'job_application_details.csv')"
+			class="btn btn-success">
+			Export to CSV
+		</button>
+	</div>
+	<form method="post" action="{{ path('job_application_show') }}">
+		<div class="form-group">
+			<label for="jobApplicationId">Select Job Application ID:</label>
+			<select class="form-control" id="jobApplicationId" name="jobApplicationId" required>
+				{% for jobApplication in jobApplications %}
+				<option value="{{ jobApplication.id }}">{{ jobApplication.id }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<button type="submit" class="btn btn-primary">Show Application</button>
+	</form>
+
+	{% if jobApplication is not null %}
+	<h3>Job Application Details</h3>
+	<table class="table" id="jobApplicationsTable">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>First Name</th>
+				<th>Second Name</th>
+				<th>Last Name</th>
+				<th>Date of Birth</th>
+				<th>Email</th>
+				<th>Phone</th>
+				<th>Salary</th>
+				<th>Position</th>
+				<th>Level</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ jobApplication.id }}</td>
+				<td>{{ jobApplication.firstName }}</td>
+				<td>{{ jobApplication.SecondName }}</td>
+				<td>{{ jobApplication.lastName }}</td>
+				<td>
+					{{ jobApplication.Birthday is not null ?
+					jobApplication.Birthday|date('Y-m-d') : '' }}
+				</td>
+				<td>{{ jobApplication.email }}</td>
+				<td>{{ jobApplication.phoneNumber }}</td>
+				<td>{{ jobApplication.expectedSalary }}</td>
+				<td>{{ jobApplication.position }}</td>
+				<td>{{ jobApplication.level }}</td>
+			</tr>
+		</tbody>
+	</table>
+	{% endif %}
+
+	<a href="{{ path('job_application_index') }}" class="btn btn-secondary" style="margin-top: 20px">Back to Menu</a>
+</div>
+<script>
+	function downloadCSV(csv, filename) {
+		var csvFile;
+		var downloadLink;
+
+		csvFile = new Blob([csv], { type: "text/csv" });
+
+		downloadLink = document.createElement("a");
+
+		downloadLink.download = filename;
+
+		downloadLink.href = window.URL.createObjectURL(csvFile);
+
+		downloadLink.style.display = "none";
+
+		document.body.appendChild(downloadLink);
+
+		downloadLink.click();
+	}
+
+	function exportTableToCSV(tableId, filename) {
+		var csv = [];
+		var rows = document.getElementById(tableId).querySelectorAll("tr");
+
+		for (var i = 0; i < rows.length; i++) {
+			var row = [],
+				cols = rows[i].querySelectorAll("td, th");
+
+			for (var j = 0; j < cols.length; j++) row.push(cols[j].innerText);
+
+			csv.push(row.join(","));
+		}
+		downloadCSV(csv.join("\n"), filename);
+	}
+</script>
+
+{% endblock %}

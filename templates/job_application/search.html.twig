@@ -1,0 +1,132 @@
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin-top: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            margin-right: 10px;
+            margin-bottom: 30px;
+        }
+
+    </style>
+<div class="container mt-5">
+    <h2>All Job Applications</h2>
+    <h4>There are 4 search types to choose from:</h4>
+    <p>ID - search by ID</p>
+    <p>New - searches only for new applications, i.e. applications that the user has not seen before</p>
+    <p>Old - searches only for old applications, i.e. applications that the user has already seen</p>
+    <p>All - searches for all applications</p>
+    <div class="btn-group" style="margin-top: 20px">
+        <a href="{{ path('job_application_show') }}" class="btn btn-primary">ID</a>
+        <a href="{{ path('job_application_new') }}" class="btn btn-primary">New</a>
+        <a href="{{ path('job_application_old') }}" class="btn btn-primary">Old</a>
+        <a href="{{ path('job_application_all') }}" class="btn btn-primary">All</a>
+        <button onclick="exportTableToCSV('jobApplicationsTable', 'job_applications.csv')" class="btn btn-success">Export to CSV</button>
+    </div>
+
+    {% if not ('search' in app.request.uri) %}
+        <table class="table" id="jobApplicationsTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Second Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Salary</th>
+                <th>Position</th>
+                <th>Level</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for jobApplication in jobApplications %}
+                <tr>
+                    <td>{{ jobApplication.id }}</td>
+                    <td>{{ jobApplication.firstName }}</td>
+                    <td>{{ jobApplication.SecondName }}</td>
+                    <td>{{ jobApplication.lastName }}</td>
+                    <td>{{ jobApplication.Birthday is not null ? jobApplication.Birthday|date('Y-m-d') : '' }}</td>
+                    <td>{{ jobApplication.email }}</td>
+                    <td>{{ jobApplication.phoneNumber }}</td>
+                    <td>{{ jobApplication.expectedSalary }}</td>
+                    <td>{{ jobApplication.position }}</td>
+                    <td>{{ jobApplication.level }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{{ path('job_application_index') }}" class="btn btn-secondary">Back to Menu</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#jobApplicationsTable').DataTable({
+            "pageLength": 15,
+            "order": [
+                [0, 'asc']
+            ],
+
+        });
+    });
+
+    function downloadCSV(csv, filename) {
+        var csvFile;
+        var downloadLink;
+
+        csvFile = new Blob([csv], { type: "text/csv" });
+
+        downloadLink = document.createElement("a");
+
+        downloadLink.download = filename;
+
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+        downloadLink.style.display = "none";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
+    function exportTableToCSV(tableId, filename) {
+        var csv = [];
+        var rows = document.getElementById(tableId).querySelectorAll("tr");
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = [],
+                cols = rows[i].querySelectorAll("td, th");
+
+            for (var j = 0; j < cols.length; j++)
+                row.push(cols[j].innerText);
+
+            csv.push(row.join(","));
+        }
+        downloadCSV(csv.join("\n"), filename);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+    db:
+        container_name: db-container
+        image: mysql:8.0.33
+        platform: linux/x86_64
+        command: [ "--default-authentication-plugin=mysql_native_password" ]
+        volumes:
+            - "./.docker/db_app:/var/lib/mysql"
+        environment:
+          - MYSQL_ROOT_PASSWORD=
+          - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+          - MYSQL_DATABASE=${DATABASE_NAME}
+          - MYSQL_USER=${DATABASE_USER}
+          - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+        ports:
+            - 3306:3306
+        networks:
+            - symfony_app
+    php:
+        container_name: php-container
+        build:
+            context: "./.docker/php"
+            args:
+                TIMEZONE: ${TIMEZONE}
+        volumes:
+            - "./:/var/www/symfony:cached"
+            - ".docker/symfony_app_var:/var/www/symfony/var"
+            - ".docker/symfony_app_vendor:/var/www/symfony/vendor"
+        networks:
+            - symfony_app
+    nginx:
+        container_name: nginx-container
+        build:
+            context: "./.docker/nginx"
+        volumes:
+            - "./:/var/www/symfony:cached"
+            - "./.docker/symfony_app_var:/var/www/symfony/var"
+            - "./.docker/symfony_app_vendor:/var/www/symfony/vendor"
+        ports:
+            - 8080:80
+        networks:
+            - symfony_app
+        env_file:
+            - "./.docker/.env.nginx.local"
+
+volumes:
+    symfony_app_var:
+    symfony_app_vendor:
+    db_app:
+
+networks:
+    symfony_app:

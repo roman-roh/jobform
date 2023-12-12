@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %} {% block body %}
+<style>
+  body {
+    font-family: "Arial", sans-serif;
+    margin-top: 20px;
+  }
+
+  .container {
+    margin-top: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .btn-group {
+    display: flex;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+    margin-right: 10px;
+    margin-bottom: 30px;
+  }
+
+  #jobApplicationsTable th,
+  #jobApplicationsTable td {
+    text-align: center;
+  }
+
+  #jobApplicationsTable th {
+    white-space: nowrap;
+  }
+</style>
+<div class="container">
+  <h2>Job Applications</h2>
+  <form
+    action="{{ path('job_application_add') }}"
+    method="post"
+    accept-charset="UTF-8"
+  >
+    <div class="form-group">
+      <label for="firstName">First Name:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="firstName"
+        name="firstName"
+        pattern="[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\s]+"
+        title="Please enter only letters"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="SecondName">Second Name: (Optional)</label>
+      <input
+        type="text"
+        class="form-control"
+        id="SecondName"
+        name="SecondName"
+        pattern="[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\s]+"
+        title="Please enter only letters"
+      />
+    </div>
+    <div class="form-group">
+      <label for="lastName">Last Name:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="lastName"
+        name="lastName"
+        pattern="[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\s\-]+"
+        title="Please enter only letters and hyphen"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="Birthday">Birthday: (Optional)</label>
+      <input
+        type="date"
+        class="form-control"
+        id="Birthday"
+        name="Birthday"
+        max="{{ 'now'|date('Y-m-d') }}"
+      />
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number:</label><br />
+      <small>Format: +48123456789</small>
+      <input
+        type="tel"
+        class="form-control"
+        id="phoneNumber"
+        name="phoneNumber"
+        pattern="[0-9+]{1,12}"
+        title="Please enter only numbers and the plus sign, maximum 12 characters"
+        oninput="validatePhoneNumber(this)"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="expectedSalary">Expected Salary:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="expectedSalary"
+        name="expectedSalary"
+        pattern="[0-9]{1,6}"
+        title="Please enter only numbers from 0 to 100000"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="position">Position:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="position"
+        name="position"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="level">Level:</label>
+      <small
+        >The level depends on salary, e.g. below 5,000 - junior; 5,000 - 9,999 -
+        regular; over 10,000 - senior</small
+      >
+      <input
+        type="text"
+        class="form-control"
+        id="level"
+        name="level"
+        readonly
+      />
+    </div>
+    <button
+      type="submit"
+      style="width: 100%; height: 50px"
+      class="btn btn-primary"
+    >
+      Submit Application
+    </button>
+  </form>
+
+  <div class="btn-group" style="margin-top: 20px">
+    <a href="{{ path('job_application_search') }}" class="btn btn-primary"
+      >Search</a
+    >
+  </div>
+</div>
+{% if success is defined %} {% if success == true %}
+<script type="text/javascript">
+  setTimeout(function () {
+    alert("Data added to the database");
+  }, 1000);
+</script>
+{% elseif success == false %}
+<script type="text/javascript">
+  setTimeout(function () {
+    alert(
+      'Error adding data to the database\nErrors:      {{ errors | default("No errors") }}\nData:      {{ data | default("No data") }}'
+    );
+  }, 1000);
+</script>
+{% endif %} {% endif %}
+
+<script>
+  $(document).ready(function () {
+    $("#expectedSalary").on("input", function () {
+      var expectedSalary = $(this).val();
+      var level = "";
+
+      if (expectedSalary < 5000) {
+        level = "Junior";
+      } else if (expectedSalary >= 5000 && expectedSalary <= 9999) {
+        level = "Regular";
+      } else {
+        level = "Senior";
+      }
+
+      $("#level").val(level);
+    });
+  });
+
+  function validatePhoneNumber(input) {
+    var cleanedValue = input.value.replace(/[^0-9+]/g, "");
+
+    if (cleanedValue.startsWith("+")) {
+      if (cleanedValue.indexOf("+") !== 0) {
+        input.value = "+" + cleanedValue.substring(1);
+      }
+    } else {
+      input.value = "+" + cleanedValue;
+    }
+  }
+</script>
+{% endblock %}
